@@ -1,0 +1,53 @@
+<style xmlns="http://www.w3.org/1999/html">
+
+.label1 {
+    border-radius: 10px;
+    font-family: 'Lobster';
+    font-size: 15px;
+    color: #080808;
+    background: #3ba2ff;
+
+}
+</style>
+{% extends 'blog/base.html' %}
+
+{% block content %}
+<div class="content container">
+    <div class="post">
+        {% if post.published_date %}
+            <div class="date">
+                {{ post.published_date }}
+            </div>
+        {% endif %}
+        {% if user.email == "ivankukurudziak@gmail.com" %}
+            <a class="btn btn-default" href="{% url 'post_edit' pk=post.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+            <a class="btn btn-default" href="{% url 'post_dell' pk=post.pk %}"><span class="glyphicon glyphicon-trash"></span></span></a>
+        {% endif %}
+        <h1>{{ post.title }}
+            <br><span class="label1" >
+                {{ post.topic }}
+            </span>
+        </h1>
+        {% if post.post_img %}
+            <img src="{{ post.post_img.url }}"><br>
+        {% endif %}
+        <p>{{ post.text|linebreaksbr }}
+            {% if post.link %}
+            <br><a href="{{post.link}}" target="_blank">{{post.link}}</a></p>
+            {% endif %}
+    </div>
+        {% for coment in coments %}
+        <div class="coment">
+            <h4>{{ coment.author }} : <i>{{ coment.data }}</i></h4>
+            <p class="coment-text">{{ coment.coment_text }}</p>
+         </div>
+    {% endfor %}
+    {% if user.is_authenticated %}
+        <form method="post" action="{% url 'add_coment' pk=post.pk %}" id="add">
+            {% csrf_token %}
+            <br><button type="submit" >Add coment</button>
+        </form>
+        <textarea name="coment_text" rows="4" cols="80" form="add"></textarea><br>
+    {% endif %}
+    </div><br><br><br><br>
+{% endblock %}

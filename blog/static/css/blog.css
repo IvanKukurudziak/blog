@@ -1,0 +1,129 @@
+@import "mixins.less";
+@import 'shared/reset';
+@import 'shared/about-light';
+
+
+.page-header {
+    background-color: #3ba2ff;
+    margin-top: 0;
+    padding: 20px 20px 20px 40px;
+}
+
+.page-header h1, .page-header h1 a, .page-header h1 a:visited, .page-header h1 a:active {
+    color: #ffffff;
+    font-size: 36pt;
+    text-decoration: none;
+}
+
+.content {
+    margin-left: 40px;
+}
+
+.username{
+    font-size: 20px;
+    font-family: 'Lobster';
+    color: #3ba2ff;
+    padding: 8px 10px 10px 8px;
+}
+
+h1, h2, h3, h4 {
+    font-family: 'Lobster', cursive;
+}
+
+h4{
+    font-family: 'Lobster', cursive;
+    margin-left: 15px;
+
+}
+
+.date {
+    float: right;
+    color: #828282;
+}
+
+.save {
+    float: right;
+}
+
+.post-form textarea, .post-form input {
+    width: 100%;
+}
+
+.coment {
+    background-color: lightgrey;
+    width: 58%;
+    hyphens: auto;
+    table-layout: auto;
+    margin: 20px;
+}
+
+.coment-text{
+    margin-left: 25px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+i{
+    font-size: 12;
+    margin-left: 10px;
+}
+.top-menu, .top-menu:hover, .top-menu:visited {
+    color: #ffffff;
+    float: right;
+    font-size: 26pt;
+    margin-right: 20px;
+}
+
+.post {
+    margin-bottom: 70px;
+}
+
+.post h1 a, .post h1 a:visited {
+    color: #000000;
+}
+
+
+.container-news {
+  display:inline ;
+  form {display: inline;  margin: 10px; }
+}
+form {  margin: 10px; }
+
+.button-news {
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+  height: 36px;
+  line-height: 35px;
+  padding: 0 25px;
+  font-size: 15px;
+  font-family: 'Lobster';
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  text-shadow: 0 -1px rgba(black, .4);
+  background-clip: padding-box;
+  background: #3ba2ff;
+  border: 1px solid;
+  border-radius: 2px;
+  cursor: pointer;
+  @include box-shadow(inset 0 1px rgba(white, .1),
+                      inset 0 0 0 1px rgba(white, .08),
+                      0 1px 2px rgba(black, .25));
+
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+    @include radial-gradient(center top, farthest-corner, rgba(white, .08), rgba(white, 0));
+  }
+
+  &:hover:before { @include radial-gradient(farthest-corner, rgba(white, .18), rgba(white, .03)); }
+  &:active { @include box-shadow(inset 0 1px 2px rgba(black, .2)); }
+  &:active:before { content: none; }
+}
+

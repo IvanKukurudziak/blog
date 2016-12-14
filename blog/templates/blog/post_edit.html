@@ -1,0 +1,20 @@
+{% extends 'blog/base.html' %}
+{% block content %}
+    <h1>New post</h1>
+    <div class="container-news">
+     {% if user.email == 'ivankukurudziak@gmail.com' %}
+     <form  action="/add_travelnews" method="get" >
+         <button type="submit"class="button-news">Add travel news</button>
+     </form>
+     <form action="/add_foodnews" method="get" >
+         <button type="submit"class="button-news">Add food news</button>
+     </form>
+     <form action="/add_sportnews" method="get" >
+         <button type="submit"class="button-news">Add sport news</button>
+     </form></div>
+    {% endif %}
+    <form method="POST" class="post-form" enctype="multipart/form-data">{% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="save btn btn-default">Save</button><br><br>
+    </form>
+{% endblock %}
