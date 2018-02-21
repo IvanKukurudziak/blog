@@ -1,90 +1,26 @@
-from .models import Post, Coment
-from django.shortcuts import render, get_object_or_404
-from .forms import PostForm,UserForm, ComentForm
-from django.utils import timezone
-from django.shortcuts import redirect
-from django.shortcuts import render_to_response
-from django.template import RequestContext
-from django.http import HttpResponseRedirect, HttpResponse
+import http.client
+import json
+import os
+import shutil
+import urllib.error
+import urllib.request
+
+from PIL import Image
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
-import urllib.request
-import json, shutil,os
-import http.client, urllib.error
+from django.http import HttpResponseRedirect
+from django.shortcuts import redirect
+from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+from django.utils import timezone
+
+from .forms import PostForm, UserForm, ComentForm
+from .models import Post, Comment
 
 
-# функція для виводу всіх постів
-def post_list(request):
-    posts = Post.objects.all().order_by('-published_date')
-    return render(request, 'blog/post_list.html', {'posts': posts})
-
-
-#функція для відображення постів з темою - подорожі
-
-def post_list_travel(request):
-    posts = Post.objects.filter(topic="Travel").order_by('-published_date')
-    return render(request, 'blog/post_list.html', {'posts': posts})
-
-
-
-#функція для відображення постів з темою - їжа
-def post_list_food(request):
-    posts = Post.objects.filter(topic="Food").order_by('-published_date')
-    return render(request, 'blog/post_list.html', {'posts': posts})
-
-
-#функція для відображення постів з темою - спорт
-def post_list_sport(request):
-    posts = Post.objects.filter(topic="Sport").order_by('-published_date')
-    return render(request, 'blog/post_list.html', {'posts': posts})
-
-
-#функці для перегляду посту
-def post_detail(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-    coments = Coment.objects.filter(coment_to=post)
-    return render(request, 'blog/post_detail.html', {'post': post, 'coments':coments})
-
-
-#функція для відображення додовання нового посту
-def post_new(request):
-    if request.method == "POST":
-        form = PostForm(request.POST, request.FILES)
-        if form.is_valid():
-            post = form.save(commit=False)
-            if Post.objects.filter(title=post.title):
-                posts = Post.objects.filter(title=post.title)
-                return render(request, 'blog/post_list.html', {"posts": posts})
-            if form.cleaned_data['link']:
-                post.link = form.cleaned_data['link']
-            post.post_img = form.cleaned_data['post_img']
-            post.author = request.user
-            post.published_date = timezone.now()
-            post.save()
-        return redirect('post_detail', pk=post.pk)
-    else:
-        form = PostForm()
-    return render(request, 'blog/post_edit.html', {'form': form})
-
-
-#функція для відображення редагування потсу
-def post_edit(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-    if request.method == "POST":
-        form = PostForm(request.POST, request.FILES, instance=post)
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.author = request.user
-            post.published_date = timezone.now()
-            post.save()
-            return redirect('post_detail', pk=post.pk)
-    else:
-        form = PostForm(instance=post)
-    return render(request, 'blog/post_edit.html', {'form': form})
-
-
-#функція видалення посту
+# функція видалення посту
 def post_dell(request, pk):
     post = get_object_or_404(Post, pk=pk)
     if post:
@@ -93,16 +29,17 @@ def post_dell(request, pk):
         return render(request, 'blog/post_list.html', {'posts': posts})
 
 
-#функція для відображення форми лугування
+# функція для відображення форми лугування
 def log_in(request):
     return render(request, 'blog/log_in.html')
 
 
-#функція для відображення форми реєстрації
+# функція для відображення форми реєстрації
 def sing_up(request):
     return render(request, 'blog/sing_up.html')
 
-#функція реєстраці нових користувачів
+
+# функція реєстраці нових користувачів
 def registration(request):
     if request.method == 'POST':
         user = UserForm(request.POST)
@@ -116,7 +53,7 @@ def registration(request):
             message = "Thank Yuo for registrations!"
             return render(request, 'blog/base.html', {'message': message})
         else:
-            m  = "This e-mail: {}, has been registered.   ".format(user.cleaned_data['email'])
+            m = "This e-mail: {}, has been registered.   ".format(user.cleaned_data['email'])
             return render(request, 'blog/base.html', {'message': m})
     else:
         form = UserForm()
@@ -124,49 +61,42 @@ def registration(request):
         return render_to_response('blog/post_list.html', args)
 
 
-#функція для перевірки даних логування
+# функція для перевірки даних логування
 def user_login(request):
-    context = RequestContext(request)
     if request.method == "POST":
-        mail = request.POST['email']
-        try:
-            name = User.objects.get(email=mail).username
-        except ObjectDoesNotExist:
-            m = "Sorry! Incorect email. You have to sing up firts."
-            return render(request, 'blog/base.html', {'message': m})
-        name = User.objects.get(email=mail).username
-        pasw = request.POST['password']
-        user = authenticate(username=name, password=pasw)
-        if user:
-            if user.is_active:
-                login(request, user)
-                return HttpResponseRedirect('/home')
+        mail = request.POST.get('email', None)
+        password = request.POST.get('password', None)
+        if mail and password:
+            user = authenticate(username=mail, password=password)
+            if user:
+                if user.is_active:
+                    login(request, user)
+                    return HttpResponseRedirect('/home')
+                else:
+                    m = "Invalid login details supplied. Invalid login details"
+                    return render(request, 'blog/base.html', {'message': m})
             else:
-                m = "Invalid login details supplied. Invalid login details"
+                m = " ".join(["Invalid login details supplied.\n",
+                              "Invalid login details: {}.\n".format(mail)])
                 return render(request, 'blog/base.html', {'message': m})
-        else:
-            m = " ".join(["Invalid login details supplied.\n",
-                                          "Invalid login details: {}.\n".format(mail)])
-            return render(request, 'blog/base.html', {'message': m})
-    else:
-        return HttpResponseRedirect('/user_login')
+    return HttpResponseRedirect('/user_login')
 
 
-#функція  для виходу користувача
+# функція  для виходу користувача
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect('/home')
 
 
-def add_coment(request,pk):
+def add_coment(request, pk):
     if request.method == "POST":
         post = get_object_or_404(Post, pk=pk)
         form = ComentForm(request.POST)
         if form and post:
             coment = form.save(commit=False)
-            coment =Coment(coment_to=post, author=request.user,
-                           coment_text=form.cleaned_data['coment_text'],
-                           data=timezone.now())
+            coment = Comment(comment_to=post, author=request.user,
+                             comment_text=form.cleaned_data['coment_text'],
+                             data=timezone.now())
             coment.save()
             return redirect('post_detail', pk=post.pk)
         else:
@@ -176,7 +106,6 @@ def add_coment(request,pk):
         form = PostForm()
         args = RequestContext(request, {'form': form})
         return render_to_response('blog/post_list.html', args)
-
 
 
 def get_sportnews(request):
@@ -189,7 +118,7 @@ def get_sportnews(request):
         articles = data['articles']
         for article in articles:
             form = PostForm()
-            if  not Post.objects.filter(title=article['title']):
+            if not Post.objects.filter(title=article['title']):
                 url = article['url']
                 img_url = article['urlToImage']
                 link = r'{}'.format(url)
@@ -200,8 +129,8 @@ def get_sportnews(request):
                 new_post.title = article['title']
                 if article['urlToImage']:
                     img_url = article['urlToImage']
-                    img = urllib.request.urlretrieve(img_url, img_url[-7:] )
-                    shutil.copy2(img[0], 'media/'+img[0])
+                    img = urllib.request.urlretrieve(img_url, img_url[-7:])
+                    shutil.copy2(img[0], 'media/' + img[0])
                     new_post.post_img = img[0]
                     os.remove(img[0])
                 new_post.text = txt
@@ -233,7 +162,7 @@ def get_foodnews(request):
         news = data['value']
         for n in news:
             form = PostForm()
-            if  not Post.objects.filter(title=n['name']):
+            if not Post.objects.filter(title=n['name']):
                 # img_url = n['image']['thumbnail']['contentUrl']
                 url = n['url']
                 link = r'{}'.format(url)
@@ -244,7 +173,7 @@ def get_foodnews(request):
                 new_post.text = n['description']
                 if n['image']['thumbnail']['contentUrl']:
                     img_url = n['image']['thumbnail']['contentUrl']
-                    img = urllib.request.urlretrieve(img_url, new_post.title[:15]+'.jpeg')
+                    img = urllib.request.urlretrieve(img_url, new_post.title[:15] + '.jpeg')
                     shutil.copy2(img[0], 'media/' + img[0])
                     new_post.post_img = img[0]
                     os.remove(img[0])
@@ -277,7 +206,7 @@ def get_travelnews(request):
         for n in news:
             form = PostForm()
             if not Post.objects.filter(title=n['name']):
-                #img_url = n['image']['thumbnail']['contentUrl']
+                # img_url = n['image']['thumbnail']['contentUrl']
                 url = n['url']
                 link = r'{}'.format(url)
                 new_post = form.save(commit=False)
@@ -287,7 +216,7 @@ def get_travelnews(request):
                 new_post.text = n['description']
                 if 'image' in n:
                     img_url = n['image']['thumbnail']['contentUrl']
-                    img = urllib.request.urlretrieve(img_url, new_post.title[:10]+'.jpeg')
+                    img = urllib.request.urlretrieve(img_url, new_post.title[:10] + '.jpeg')
                     shutil.copy2(img[0], 'media/' + img[0])
                     new_post.post_img = img[0]
                     os.remove(img[0])
@@ -298,12 +227,13 @@ def get_travelnews(request):
         return redirect('/home')
 
 
-#функція  для виходу користувача
+# функція  для виходу користувача
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect('/home', 'You are logout.')
 
-#функція пошуку  посту
+
+# функція пошуку  посту
 def search(request):
     if request.method == "GET":
         q = request.GET.get('q').lower().strip()
@@ -320,4 +250,3 @@ def search(request):
             return render(request, 'blog/base.html', {'message': m})
     else:
         return redirect('/home')
-

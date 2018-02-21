@@ -35,9 +35,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'blog',
-]
 
+    # my
+    'blog',
+
+]
 
 
 MIDDLEWARE = [
@@ -101,6 +103,26 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+# bootstrap css
+# PIPELINE_COMPILERS = (
+#     'pipeline.compilers.less.LessCompiler',
+# )
+#
+# PIPELINE_CSS = {
+#     'bootstrap': {
+#         'source_filenames': (
+#             'twitter_bootstrap/less/bootstrap.less',
+#         ),
+#         'output_filename': 'css/b.css',
+#         'extra_context': {
+#             'media': 'screen,projection',
+#         },
+#     },
+# }
+#
+
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 
@@ -116,10 +138,11 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.10/howto/static-files/
 LOGIN_REDIRECT_URL = '/home'
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
