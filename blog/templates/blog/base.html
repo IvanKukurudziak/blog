@@ -9,7 +9,8 @@
           value="BLOG" />
 
     <!-- Include Styles -->
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <!--<link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">-->
+      <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'css/blog.css' %}">
@@ -20,13 +21,13 @@
     <nav class="navbar navbar-inverse">
   ...<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-        <li><a href="/home">&nbsp;&nbsp;&nbsp;HOME <span class="sr-only"></span></a></li>
-        <li><a href="/travel">Travel</a></li>
-        <li><a href="/food">Food</a></li>
-        <li><a href="/sport">Sport</a></li>
+        <li><a href="{% url 'blog:post_list' %}">&nbsp;&nbsp;&nbsp;HOME <span class="sr-only"></span></a></li>
+        <li><a href="{% url 'blog:post_by_topic' topic='travel' %}">Travel</a></li>
+        <li><a href="{% url 'blog:post_by_topic' topic='food' %}">Food</a></li>
+        <li><a href="{% url 'blog:post_by_topic' topic='sport' %}">Sport</a></li>
       </ul>
       <form class="navbar-form navbar-left">
-          <span class="label label-default" ><a class="label label-default" href="https://vk.com/id_13081992" target="_blank" >Ivan Kukurudziak Blog</a></span>
+          <span class="label label-default" ><a class="label label-default" href="#" target="_blank" >Ivan Kukurudziak Blog</a></span>
       </form>
         <form action="/search" class="navbar-form navbar-left" method="get">
                 <input type="text" name="q" class="form-control" placeholder="Search">
@@ -44,9 +45,9 @@
     </div>
         </nav>
     <div class="page-header" >
-            {% if user.email == "ivankukurudziak@gmail.com" %}
-                <a href="{% url 'post_new' %}" class="top-menu"><span class="glyphicon glyphicon-plus"></span></a>
-            {% endif %}
+        {% if user.is_authenticated %}
+            <a href="{% url 'blog:post_new' %}" class="top-menu"><span class="glyphicon glyphicon-plus"></span></a>
+        {% endif %}
         <h1><a href="/home">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ivan Kukurudziak Blog</a></h1>
     </div>
     <div class="content container">
@@ -61,5 +62,7 @@
         </div>
     </div>
 </body>
+
+    <link rel="js" href="{% static 'js/bootstrap.min.js' %}">
 
 </html>

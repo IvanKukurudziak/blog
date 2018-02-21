@@ -1,27 +1,19 @@
-<style xmlns="http://www.w3.org/1999/html">
-
-.label1 {
-    border-radius: 10px;
-    font-family: 'Lobster';
-    font-size: 15px;
-    color: #080808;
-    background: #3ba2ff;
-
-}
-</style>
 {% extends 'blog/base.html' %}
 
 {% block content %}
 <div class="content container">
+    {% if massage %}
+    <div class="text-warning">{{ massage }}</div>
+    {% endif %}
     <div class="post">
         {% if post.published_date %}
             <div class="date">
                 {{ post.published_date }}
             </div>
         {% endif %}
-        {% if user.email == "ivankukurudziak@gmail.com" %}
-            <a class="btn btn-default" href="{% url 'post_edit' pk=post.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
-            <a class="btn btn-default" href="{% url 'post_dell' pk=post.pk %}"><span class="glyphicon glyphicon-trash"></span></span></a>
+        {% if user.is_authenticated %}
+            <a class="btn btn-default" href="{% url 'blog:post_edit' pk=post.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+            <a class="btn btn-default" href="{% url 'blog:post_dell' pk=post.pk %}"><span class="glyphicon glyphicon-trash"></span></span></a>
         {% endif %}
         <h1>{{ post.title }}
             <br><span class="label1" >
@@ -37,13 +29,13 @@
             {% endif %}
     </div>
         {% for coment in coments %}
-        <div class="coment">
-            <h4>{{ coment.author }} : <i>{{ coment.data }}</i></h4>
-            <p class="coment-text">{{ coment.coment_text }}</p>
-         </div>
-    {% endfor %}
+            <div class="coment">
+                <h4>{{ coment.author }} : <i>{{ coment.data }}</i></h4>
+                <p class="coment-text">{{ coment.coment_text }}</p>
+             </div>
+        {% endfor %}
     {% if user.is_authenticated %}
-        <form method="post" action="{% url 'add_coment' pk=post.pk %}" id="add">
+        <form method="post" action="{% url 'blog:add_coment' pk=post.pk %}" id="add">
             {% csrf_token %}
             <br><button type="submit" >Add coment</button>
         </form>

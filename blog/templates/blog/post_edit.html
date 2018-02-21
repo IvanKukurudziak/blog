@@ -2,19 +2,45 @@
 {% block content %}
     <h1>New post</h1>
     <div class="container-news">
-     {% if user.email == 'ivankukurudziak@gmail.com' %}
-     <form  action="/add_travelnews" method="get" >
+     {% if user.is_authenticated %}
+     <form  action="/add_travelnews" method='post' >
          <button type="submit"class="button-news">Add travel news</button>
      </form>
-     <form action="/add_foodnews" method="get" >
+     <form action="/add_foodnews" method="post" >
          <button type="submit"class="button-news">Add food news</button>
      </form>
-     <form action="/add_sportnews" method="get" >
+     <form action="/add_sportnews" method="post" >
          <button type="submit"class="button-news">Add sport news</button>
      </form></div>
     {% endif %}
-    <form method="POST" class="post-form" enctype="multipart/form-data">{% csrf_token %}
-        {{ form.as_p }}
+    <form method="POST" action="{% url 'blog:post_new' %}" class="post-form" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group">
+              {{ field.label_tag }}
+
+              {% if form.is_bound %}
+                {% if field.errors %}
+
+                  {% for error in field.errors %}
+                    <div class="invalid-feedback">
+                      {{ error }}
+                    </div>
+                  {% endfor %}
+
+                {% endif %}
+              {% else %}
+                {{ field }}
+              {% endif %}
+
+              {% if field.help_text %}
+                <small class="form-text text-muted">
+                  {{ field.help_text }}
+                </small>
+              {% endif %}
+            </div>
+        {% endfor %}
+
         <button type="submit" class="save btn btn-default">Save</button><br><br>
     </form>
 {% endblock %}
