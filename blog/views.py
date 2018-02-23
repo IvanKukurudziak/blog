@@ -8,13 +8,14 @@ import urllib.request
 from PIL import Image
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils import timezone
+from django.views.generic import FormView
 
 from .forms import PostForm, UserForm, ComentForm
 from .models import Post, Comment
@@ -34,31 +35,35 @@ def log_in(request):
     return render(request, 'blog/log_in.html')
 
 
-# функція для відображення форми реєстрації
-def sing_up(request):
-    return render(request, 'blog/sing_up.html')
+# клас для відображення форми реєстрації
+class SignupForm(FormView):
+    template_name = 'blog/sign_up.html'
+    form_class = UserForm
+    success_url = '/'
 
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data()
+        context['form'] = self.get_form()
+        return self.render_to_response(context)
 
-# функція реєстраці нових користувачів
-def registration(request):
-    if request.method == 'POST':
-        user = UserForm(request.POST)
-        if user.is_valid():
-            new_user = user.save(False)
-            new_user = User(username=user.cleaned_data['username'],
-                            email=user.cleaned_data['email'],
-                            password=user.cleaned_data['password'])
-            new_user.set_password(new_user.password)
-            new_user.save()
-            message = "Thank Yuo for registrations!"
-            return render(request, 'blog/base.html', {'message': message})
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            new_user = User.objects.create_user(**form.cleaned_data)
+            user = authenticate(username=new_user.email, password=form.cleaned_data['password'])
+            if user:
+                if user.is_active:
+                    login(request, user)
+                    return HttpResponseRedirect('/home')
+                else:
+                    m = "Invalid login details supplied. Invalid login details"
+                    return render(request, 'blog/base.html', {'message': m})
+            else:
+                m = "Invalid login details supplied.\n"
+                return render(request, 'blog/base.html', {'message': m})
+
         else:
-            m = "This e-mail: {}, has been registered.   ".format(user.cleaned_data['email'])
-            return render(request, 'blog/base.html', {'message': m})
-    else:
-        form = UserForm()
-        args = RequestContext(request, {'form': form})
-        return render_to_response('blog/post_list.html', args)
+            return super().post(self, request, *args, **kwargs)
 
 
 # функція для перевірки даних логування

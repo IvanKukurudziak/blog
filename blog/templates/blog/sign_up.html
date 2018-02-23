@@ -12,21 +12,24 @@
   <!--[if lt IE 9]><script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
   {% if user.is_authenticated %}<h1 class="register-title">
     Your {{ user.username }}  acount is authentificated.
-    You can go back to  <a href="{% url 'post_list' %}">home</a></h1>.<br/><br/>
+    You can go back to  <a href="{% url 'blog:post_list' %}">home</a></h1>.<br/><br/>
   {% else %}
       </head>
       <body>
         <h2 class="register-title">Welcome to my blog</h2>
-        <form class="register" action="registr" method="post">
+        <form class="register" action="{% url 'blog:sign_up' %}" method="post">
           {% csrf_token %}
           <p>Enter your name:</p>
-          <input type="username" name ="username" class="register-input" placeholder="User name" required>
+          {{ form.username }}
+          <span style="color: #fcf8e3">{{ form.username.errors }}</span>
           <p>Enter your email:</p>
-          <input type="email" name ="email" class="register-input" placeholder="Email address" required>
+          {{ form.email }}
+          <span style="color: #fcf8e3">{{ form.email.errors }}</span>
           <p>Enter your password:</p>
-          <input type="password" name ="password" class="register-input" placeholder="Password" required><br>
-          <input  type="submit" value="register" class="register-button"><br>
-          <a href="/home">back</a>
+          {{ form.password }}
+          <span style="color: #fcf8e3">{{ form.password.errors }}</span><br><br>
+          <input type="submit" value="register" class="register-button"><br>
+          <br><a href="{% url 'blog:post_list' %}" style="color:aliceblue">back</a>
         </form>
       </body>
   {% endif %}

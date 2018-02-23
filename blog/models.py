@@ -14,7 +14,7 @@ class Post(models.Model):
     post_img = models.ImageField(blank=True, null=True)
     text = models.TextField()
     created_date = models.DateTimeField(default=timezone.now())
-    published_date = models.DateTimeField(blank=True, null=True)
+    published_date = models.DateTimeField(auto_now_add=True)
     link = models.CharField(max_length=500, blank=True, null=True)
 
     def publish(self):

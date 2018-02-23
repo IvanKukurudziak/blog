@@ -39,10 +39,12 @@ INSTALLED_APPS = [
     # my
     'blog',
 
+    # social auth
+    'social_django'
 ]
 
 
-MIDDLEWARE = [
+MIDDLEWARE_CLASSES= [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -50,7 +52,20 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'social_django.middleware.SocialAuthExceptionMiddleware',
+
 ]
+
+#Authentication backends
+AUTHENTICATION_BACKENDS = (
+        'django.contrib.auth.backends.ModelBackend',
+        "mezzanine.core.auth_backends.MezzanineBackend",
+
+        'social_core.backends.github.GithubOAuth2',
+        'social_core.backends.twitter.TwitterOAuth',
+        'social_core.backends.facebook.FacebookOAuth2',
+    )
 
 ROOT_URLCONF = 'mysite.urls'
 
@@ -65,6 +80,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -101,6 +119,15 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+
+LOGIN_URL = 'blog:login'
+LOGOUT_URL = 'blog:logout'
+LOGIN_REDIRECT_URL = 'blog:home'
+
+# Facebook secrets
+SOCIAL_AUTH_FACEBOOK_KEY = '120554005318961'  # App ID
+SOCIAL_AUTH_FACEBOOK_SECRET = '315c6d5e224948939958f53c9e9ce0c6'  # App Secret
 
 
 # bootstrap css

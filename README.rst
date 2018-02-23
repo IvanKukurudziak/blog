@@ -23,6 +23,10 @@ change dir and install requirements::
     cd blog
     pip install -r requirements.txt
 
+
+run migrations::
+    python manage.py migrate
+
 run server::
 
     python manage.py runserver

@@ -10,7 +10,7 @@
                         <div class="date">
                             <p>published: {{ post.published_date }}</p>
                         </div>
-                        <h1><a href="{% url 'blog:post_detail' pk=post.pk %}">{{ post.title }}</a><br>
+                        <h1><a href="#" onclick="detailShow()">{{ post.title }}</a><br>
                         <span class="label1" >
                             {{ post.topic }}
                         </span></h1>
@@ -21,6 +21,27 @@
                             <br>
                     </div>
                 {% endfor %}
+                {% if is_paginated %}
+                    <nav aria-label="Page navigation example">
+                      <ul class="pagination">
+                        <li class="page-item">
+                          <a class="page-link" href="{{context.get_absolute_url}}{% if prev_page %}?page={{prev_page}} {% endif %}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                            <span class="sr-only">Previous</span>
+                          </a>
+                        </li>
+                            {% for page in pages %}
+                                <li class="page-item"><a class="page-link" href="{{context.get_absolute_url}}?page={{page}}">{{ page }}</a></li>
+                            {% endfor %}
+                        <li class="page-item">
+                          <a class="page-link" href="{{context.get_absolute_url}}?page={% if next_page %}{{ next_page }}{%else  %}{{pages | last}}{% endif %}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                            <span class="sr-only">Next</span>
+                          </a>
+                        </li>
+                      </ul>
+                    </nav>
+                {% endif %}
             </div>
         </div>
     </div>

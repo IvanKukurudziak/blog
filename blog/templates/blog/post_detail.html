@@ -12,22 +12,30 @@
             </div>
         {% endif %}
         {% if user.is_authenticated %}
-            <a class="btn btn-default" href="{% url 'blog:post_edit' pk=post.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
-            <a class="btn btn-default" href="{% url 'blog:post_dell' pk=post.pk %}"><span class="glyphicon glyphicon-trash"></span></span></a>
+            <form id="del" action="{% url 'blog:post_dell' pk=post.pk%}" method="get">
+                {% csrf_token %}
+            </form>
+            <form id="update" action="{% url 'blog:post_update' pk=post.pk%}" method="get">
+                {% csrf_token %}
+            </form>
+            <button form="update" type="submit" for><span class="glyphicon glyphicon-pencil"></span></button>
+            <button form="del" type="submit"><span class="glyphicon glyphicon-trash"></span></button>
+
         {% endif %}
         <h1>{{ post.title }}
-            <br><span class="label1" >
+            <br><span class="h3" >
                 {{ post.topic }}
             </span>
         </h1>
         {% if post.post_img %}
             <img src="{{ post.post_img.url }}"><br>
         {% endif %}
-        <p>{{ post.text|linebreaksbr }}
-            {% if post.link %}
-            <br><a href="{{post.link}}" target="_blank">{{post.link}}</a></p>
-            {% endif %}
-    </div>
+            <div class="text-truncate">
+                {{ post.text|linebreaksbr }}
+            </div>
+        {% if post.link %}
+            <a class href="{{post.link}}" target="_blank">{{post.link}}</a></div>
+        {% endif %}
         {% for coment in coments %}
             <div class="coment">
                 <h4>{{ coment.author }} : <i>{{ coment.data }}</i></h4>
