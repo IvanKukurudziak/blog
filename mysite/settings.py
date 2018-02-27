@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'blog',
 
     # social auth
-    'social_django'
+    'social_django',
+    'widget_tweaks'
 ]
 
 
@@ -128,25 +129,6 @@ LOGIN_REDIRECT_URL = 'blog:home'
 # Facebook secrets
 SOCIAL_AUTH_FACEBOOK_KEY = '120554005318961'  # App ID
 SOCIAL_AUTH_FACEBOOK_SECRET = '315c6d5e224948939958f53c9e9ce0c6'  # App Secret
-
-
-# bootstrap css
-# PIPELINE_COMPILERS = (
-#     'pipeline.compilers.less.LessCompiler',
-# )
-#
-# PIPELINE_CSS = {
-#     'bootstrap': {
-#         'source_filenames': (
-#             'twitter_bootstrap/less/bootstrap.less',
-#         ),
-#         'output_filename': 'css/b.css',
-#         'extra_context': {
-#             'media': 'screen,projection',
-#         },
-#     },
-# }
-#
 
 
 

@@ -1,0 +1,24 @@
+<nav class="navbar navbar-inverse">
+  ...<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li><a href="{% url 'blog:post_list' %}">&nbsp;&nbsp;&nbsp;HOME <span class="sr-only"></span></a></li>
+        <li><a href="{% url 'blog:post_by_topic' topic='travel' %}">Travel</a></li>
+        <li><a href="{% url 'blog:post_by_topic' topic='food' %}">Food</a></li>
+        <li><a href="{% url 'blog:post_by_topic' topic='sport' %}">Sport</a></li>
+      </ul>
+        <form id="search-form" class="navbar-form navbar-left" >
+            {% csrf_token %}
+                <input type="text" id="q" name="q" class="form-control" placeholder="Search">
+                {% include 'blog/search.html' %}
+        </form>
+      <ul class="nav navbar-nav navbar-right">
+        {% if user.is_authenticated %}>
+            <li style="float:left;" class="username">Hello!&nbsp;&nbsp;{{ user.username }}&nbsp;&nbsp;</li>
+            <li><a href="{% url 'blog:logout' %}">Log out&nbsp;</a></li>
+        {% else %}
+              <li><a href="{% url 'blog:login' %}">Log in</a></li>
+              <li><a href="{% url 'blog:signup' %}">Sing up</a></li>
+        {% endif %}&nbsp;
+      </ul>
+    </div>
+</nav>

@@ -1,36 +1,17 @@
-<!DOCTYPE html>
-{% load static %}
-<!--[if lt IE 7]> <html class="lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
-<!--[if IE 7]> <html class="lt-ie9 lt-ie8" lang="en"> <![endif]-->
-<!--[if IE 8]> <html class="lt-ie9" lang="en"> <![endif]-->
-<!--[if gt IE 8]><!--> <html lang="en"> <!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>Registration Form</title>
-  <link rel="stylesheet" href="{% static 'css/sing_up_css.css' %}">
-  <!--[if lt IE 9]><script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-  {% if user.is_authenticated %}<h1 class="register-title">
-    Your {{ user.username }}  acount is authentificated.
-    You can go back to  <a href="{% url 'blog:post_list' %}">home</a></h1>.<br/><br/>
-  {% else %}
-      </head>
-      <body>
+{% extends 'blog/base.html' %}
+{% load widget_tweaks %}
+{% block content %}
+    <div class="text-center">
         <h2 class="register-title">Welcome to my blog</h2>
-        <form class="register" action="{% url 'blog:sign_up' %}" method="post">
+        <form class="" action="{% url 'blog:signup' %}" method="post">
           {% csrf_token %}
-          <p>Enter your name:</p>
-          {{ form.username }}
+            <p>Enter your name: {{ form.username }}</p>
           <span style="color: #fcf8e3">{{ form.username.errors }}</span>
-          <p>Enter your email:</p>
-          {{ form.email }}
+          <p>Enter your email: {{ form.email }} </p>
           <span style="color: #fcf8e3">{{ form.email.errors }}</span>
-          <p>Enter your password:</p>
-          {{ form.password }}
-          <span style="color: #fcf8e3">{{ form.password.errors }}</span><br><br>
-          <input type="submit" value="register" class="register-button"><br>
-          <br><a href="{% url 'blog:post_list' %}" style="color:aliceblue">back</a>
+          <p>Enter your password: {{ form.password }}</p>
+          <span style="color: #fcf8e3">{{ form.password.errors }}</span>
+          <input type="submit" value="register" class="btn"><br>
         </form>
-      </body>
-  {% endif %}
-</html>
+    </div>
+{% endblock %}

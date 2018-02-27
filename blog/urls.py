@@ -1,6 +1,7 @@
 from django.conf.urls import url
 from django.views.generic import TemplateView
 
+from blog.views import MyLoginView
 from .blog_post import PostListView, PostDetailView, PostCreateNew, PostDeleteView, PostUpdateView
 from . import views
 from django.conf import settings
@@ -21,10 +22,10 @@ urlpatterns = [
     url(r'^add_foodnews$', views.get_foodnews, name='addfood'),
     url(r'^add_travelnews$', views.get_travelnews, name='addtravel'),
     url(r'^post/(?P<pk>[0-9]+)/add_coment/$', views.add_coment, name='add_coment'),
-    url(r'^search/$', views.search, name='search'),
-    url(r'^log_in$', TemplateView.as_view(template_name='blog/log_in.html'), name='log_in'),
-    url(r'^sign_up$', views.SignupForm.as_view(), name='sign_up'),
-    url(r'^log_out$', views.user_logout, name='logout'),
+    url(r'^search$', views.search, name='search'),
+    url(r'^login$', MyLoginView.as_view(template_name='blog/log_in.html'), name='login'),
+    url(r'^signup$', views.SignupForm.as_view(), name='signup'),
+    url(r'^logout$', views.user_logout, name='logout'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

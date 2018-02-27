@@ -5,10 +5,8 @@ import shutil
 import urllib.error
 import urllib.request
 
-from PIL import Image
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
@@ -17,22 +15,8 @@ from django.template import RequestContext
 from django.utils import timezone
 from django.views.generic import FormView
 
-from .forms import PostForm, UserForm, ComentForm
+from .forms import PostForm, UserForm, ComentForm, UserLoginForm
 from .models import Post, Comment
-
-
-# функція видалення посту
-def post_dell(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-    if post:
-        post.delete()
-        posts = Post.objects.all().order_by('-published_date')
-        return render(request, 'blog/post_list.html', {'posts': posts})
-
-
-# функція для відображення форми лугування
-def log_in(request):
-    return render(request, 'blog/log_in.html')
 
 
 # клас для відображення форми реєстрації
@@ -240,18 +224,28 @@ def user_logout(request):
 
 # функція пошуку  посту
 def search(request):
-    if request.method == "GET":
-        q = request.GET.get('q').lower().strip()
-        if q:
-            posts_all = Post.objects.all()
-            posts = [p for p in posts_all if q in p.title.lower()]
-            if posts:
-                return render(request, 'blog/post_list.html', {'posts': posts})
-            else:
-                m = 'There are no post with "{}".'.format(q)
-                return render(request, 'blog/base.html', {'message': m})
-        else:
-            m = "Fill a search form."
-            return render(request, 'blog/base.html', {'message': m})
-    else:
-        return redirect('/home')
+    q = request.GET.get('q')
+    if q == '' or len(q) == 1:
+        q = False
+    posts = Post.objects.filter(title__contains=q).order_by('published_date')[:10]
+    return render_to_response('blog/search.html', {'data':posts})
+
+
+class MyLoginView(FormView):
+    template_name = 'blog/log_in.html'
+    form_class = UserLoginForm
+    success_url = '/home'
+
+    def post(self, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            passwd = form.cleaned_data['password']
+            user = authenticate(username=email, password=passwd)
+            if user:
+                if user.is_active:
+                    login(self.request, user)
+            return super(MyLoginView, self).post(*args, **kwargs)
+
+
+

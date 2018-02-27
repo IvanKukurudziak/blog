@@ -1,0 +1,6 @@
+{% load staticfiles %}
+<div style="display: block !important;"  id="searchResults">
+    {% for post in data %}
+        <a href="{% url 'blog:post_detail' pk=post.pk %}">{{ post.title }}<i>{{ post.topic }}</i></a><br>
+    {% endfor %}
+</div>

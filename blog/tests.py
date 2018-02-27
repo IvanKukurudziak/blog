@@ -7,7 +7,7 @@ from .views import SignupForm
 
 class SingUpTest(TestCase):
     def setUp(self):
-        url = reverse('blog:sign_up')
+        url = reverse('blog:signup')
         self.response = self.client.get(url)
 
     def test_status_code(self):
@@ -15,7 +15,7 @@ class SingUpTest(TestCase):
         self.assertNotEquals(self.response.status_code, 404)
 
     def test_url_resolve_signup_view(self):
-        view = resolve('/sign_up')
+        view = resolve('/signup')
         self.assertEquals(view.func, SignupForm.as_view)
 
     def test_csrf(self):

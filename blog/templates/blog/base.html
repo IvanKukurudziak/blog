@@ -7,6 +7,7 @@
       <title>My Blog</title>
     <meta name="description"
           value="BLOG" />
+      <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
       <script  type="text/javascript" src="{% static 'js/main.js' %}"></script>
     <!-- Include Styles -->
     <!--<link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">-->
@@ -18,42 +19,19 @@
   </head>
 
 <body>
-    <nav class="navbar navbar-inverse">
-  ...<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav">
-        <li><a href="{% url 'blog:post_list' %}">&nbsp;&nbsp;&nbsp;HOME <span class="sr-only"></span></a></li>
-        <li><a href="{% url 'blog:post_by_topic' topic='travel' %}">Travel</a></li>
-        <li><a href="{% url 'blog:post_by_topic' topic='food' %}">Food</a></li>
-        <li><a href="{% url 'blog:post_by_topic' topic='sport' %}">Sport</a></li>
-      </ul>
-        <form action="/search" class="navbar-form navbar-left" method="get">
-                <input type="text" name="q" class="form-control" placeholder="Search">
-            <button type="submit" class="btn btn-default">Go</button>
-        </form>
-      <ul class="nav navbar-nav navbar-right">
-        {% if user.is_authenticated %}>
-            <li style="float:left;" class="username">Hello!&nbsp;&nbsp;{{ user.username }}&nbsp;&nbsp;</li>
-            <li><a href="/log_out">Log out&nbsp;</a></li>
-        {% else %}
-              <li><a href="{% url 'blog:log_in' %}">Log in</a></li>
-              <li><a href="{% url 'blog:sign_up' %}">Sing up</a></li>
-        {% endif %}&nbsp;
-      </ul>
-    </div>
-    </nav>
+    {% include 'blog/header_navbar.html' %}
+    {% include 'blog/search.html' %}
+
     <div class="content container">
-         {% if user.is_authenticated %}
-            <a  href="{% url 'blog:post_new' %}"><span class="glyphicons glyphicons-plus-sign">new</span></a>
-        {% endif %}
         <div class="row">
             <div class="col-md-8">
                 {%if message %}
                     <h2>{{message}}</h2>
                 {% endif %}
-            {% block content %}
-            {% endblock %}
             </div>
         </div>
+        {% block content %}
+        {% endblock %}
     </div>
 </body>
 

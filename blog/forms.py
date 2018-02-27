@@ -28,6 +28,11 @@ class ComentForm(forms.ModelForm):
         fields = ('comment_text',)
 
 
+class UserLoginForm(forms.ModelForm):
 
-
+    class Meta:
+        model = User
+        fields = ('email', 'password')
+        widgets = {'password': forms.PasswordInput(attrs={'required': True}),
+                   'email': forms.EmailInput(attrs={'required': True})}
 

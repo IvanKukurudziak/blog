@@ -1,46 +1,25 @@
-<!DOCTYPE html>
-{% load static %}
-<!--[if lt IE 7]> <html class="lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
-<!--[if IE 7]> <html class="lt-ie9 lt-ie8" lang="en"> <![endif]-->
-<!--[if IE 8]> <html class="lt-ie9" lang="en"> <![endif]-->
-<!--[if gt IE 8]><!--> <html lang="en"> <!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>Login Form</title>
-  <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
-
-<body>
-  <section class="container">
-    <div class="login">
+{% extends 'blog/base.html' %}
+{% load widget_tweaks %}
+{% block content %}
+  <div class="container">
+    <div class="form-group text-center">
       <h1>Login</h1>
-      <form method="post" action="user_login">
+      <form method="post" action="{% url 'blog:login' %}" >
         {% csrf_token %}
-        <p><input type="email" name="email" value="" placeholder="Email" required></p>
-        <p><input type="password" name="password" value="" placeholder="Password" required></p>
+        {{ form.as_p }}
         <p class="remember_me">
           <label>
             <input type="checkbox" name="remember_me" id="remember_me">
             Remember me on this computer
           </label>
         </p>
-        <p class="submit"><input type="submit" name="commit" value="Login">
-        </p><aabr>
-        <p><a href="{% url 'blog:post_list' %}">back</a></p>
+        <input type="submit" value="login" class="btn-success"><br>
       </form>
-      <br>
       <p><strong>-- OR --</strong></p>
-      <a href="{% url 'social:begin' 'facebook' %}">Login with Facebook</a>
-
+        <button class="btn-success"><a style="color: #fcf8e3" href="{% url 'social:begin' 'facebook' %}">Login with Facebook</a></button>
+        <div class="help-block">
+        <p>Forgot your password? <a href="{% url 'blog:post_list' %}">Click here to reset it</a>.</p>
     </div>
-
-    <div class="login-help">
-      <p>Forgot your password? <a href="{% url 'blog:post_list' %}">Click here to reset it</a>.</p>
-
     </div>
-
-  </section>
-
-</body>
-</html>
+  </div>
+{% endblock %}

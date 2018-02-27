@@ -7,7 +7,7 @@ from .models import Post, Comment
 
 
 class PostListView(ListView):
-    paginate_by = 3
+    paginate_by = 5
     model = Post
     template_name = 'blog/post_list.html'
 
