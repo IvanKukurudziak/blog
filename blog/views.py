@@ -7,6 +7,7 @@ import urllib.request
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
@@ -19,11 +20,33 @@ from .forms import PostForm, UserForm, ComentForm, UserLoginForm
 from .models import Post, Comment
 
 
+# клас відображення сторінки логіну
+class MyLoginView(FormView):
+    template_name = 'blog/log_in.html'
+    form_class = UserLoginForm
+
+    def get_success_url(self):
+        return reverse('blog:post_list')
+
+    def post(self, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            passwd = form.cleaned_data['password']
+            user = authenticate(username=email, password=passwd)
+            if user:
+                if user.is_active:
+                    login(self.request, user)
+            return super().post(*args, **kwargs)
+
+
 # клас для відображення форми реєстрації
-class SignupForm(FormView):
+class SignupFormView(FormView):
     template_name = 'blog/sign_up.html'
     form_class = UserForm
-    success_url = '/'
+
+    def get_success_url(self):
+        return reverse('blog:post_list')
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data()
@@ -38,37 +61,8 @@ class SignupForm(FormView):
             if user:
                 if user.is_active:
                     login(request, user)
-                    return HttpResponseRedirect('/home')
-                else:
-                    m = "Invalid login details supplied. Invalid login details"
-                    return render(request, 'blog/base.html', {'message': m})
-            else:
-                m = "Invalid login details supplied.\n"
-                return render(request, 'blog/base.html', {'message': m})
-
-        else:
-            return super().post(self, request, *args, **kwargs)
-
-
-# функція для перевірки даних логування
-def user_login(request):
-    if request.method == "POST":
-        mail = request.POST.get('email', None)
-        password = request.POST.get('password', None)
-        if mail and password:
-            user = authenticate(username=mail, password=password)
-            if user:
-                if user.is_active:
-                    login(request, user)
-                    return HttpResponseRedirect('/home')
-                else:
-                    m = "Invalid login details supplied. Invalid login details"
-                    return render(request, 'blog/base.html', {'message': m})
-            else:
-                m = " ".join(["Invalid login details supplied.\n",
-                              "Invalid login details: {}.\n".format(mail)])
-                return render(request, 'blog/base.html', {'message': m})
-    return HttpResponseRedirect('/user_login')
+                return super().post(request, *args, **kwargs)
+        return super().post(self, request, *args, **kwargs)
 
 
 # функція  для виходу користувача
@@ -229,23 +223,3 @@ def search(request):
         q = False
     posts = Post.objects.filter(title__contains=q).order_by('published_date')[:10]
     return render_to_response('blog/search.html', {'data':posts})
-
-
-class MyLoginView(FormView):
-    template_name = 'blog/log_in.html'
-    form_class = UserLoginForm
-    success_url = '/home'
-
-    def post(self, *args, **kwargs):
-        form = self.get_form()
-        if form.is_valid():
-            email = form.cleaned_data['email']
-            passwd = form.cleaned_data['password']
-            user = authenticate(username=email, password=passwd)
-            if user:
-                if user.is_active:
-                    login(self.request, user)
-            return super(MyLoginView, self).post(*args, **kwargs)
-
-
-
