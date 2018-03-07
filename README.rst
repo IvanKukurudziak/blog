@@ -25,7 +25,9 @@ change dir and install requirements::
 
 
 run migrations::
+
     python manage.py migrate
+
 
 run server::
 
