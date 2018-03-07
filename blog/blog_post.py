@@ -54,7 +54,7 @@ class PostCreateNew(CreateView):
             self.object = new_post
             coments = Comment.objects.filter(comment_to=self.object)
             self.extra_context = {"comets": coments}
-            return  redirect(self.get_success_url())
+            return redirect(self.get_success_url())
         return self.form_invalid(form)
 
 
