@@ -127,8 +127,8 @@ LOGOUT_URL = 'blog:logout'
 LOGIN_REDIRECT_URL = 'blog:home'
 
 # Facebook secrets
-SOCIAL_AUTH_FACEBOOK_KEY = '120554005318961'  # App ID
-SOCIAL_AUTH_FACEBOOK_SECRET = '315c6d5e224948939958f53c9e9ce0c6'  # App Secret
+SOCIAL_AUTH_FACEBOOK_KEY = 'xxxxxxxxx'  # App ID
+SOCIAL_AUTH_FACEBOOK_SECRET = 'xxxxxxxxxx'  # App Secret
 
 
 
